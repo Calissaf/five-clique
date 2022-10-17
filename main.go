@@ -62,7 +62,7 @@ func loadWords(files []string) string {
 		words = append(words, string(file))
 
 		if err != nil {
-			log.Fatal(fmt.Sprintf("errors reading file: %v", err))
+			log.Fatal(fmt.Sprintf("error reading file: %v", err))
 		}
 	}
 
