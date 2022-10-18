@@ -78,8 +78,9 @@ func wordList(words []string) []string {
 	var uniqueWordList []string
 	var maxListSize = 5
 	var count = 0
+	var completeList = false
 
-	for len(uniqueWordList) < maxListSize {
+	for completeList == false {
 		uniqueWordList = append(uniqueWordList, words[count])
 		for _, word := range words {
 			for i, char := range word {
@@ -87,13 +88,17 @@ func wordList(words []string) []string {
 				if uniqueChar == true {
 					break
 				}
-				if i == len(word)-1 {
+				if i == len(word)-2 {
 					uniqueWordList = append(uniqueWordList, word)
 				}
 			}
 		}
-		count++
-		uniqueWordList = nil
+		if len(uniqueWordList) < maxListSize {
+			count++
+			uniqueWordList = nil
+		} else {
+			completeList = true
+		}
 		if count == len(words) {
 			break
 		}
