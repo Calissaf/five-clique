@@ -18,14 +18,17 @@ func main() {
 	allWords := loadWords(files)
 	words := strings.Split(allWords, "\n")
 	filtered := filterWords(words)
-	unique := checkUnique(filtered)
+	uniqueWords := checkUnique(filtered)
+	uniqueWordList := wordList(uniqueWords)
 
-	for _, word := range unique {
+	fmt.Println(len(uniqueWordList))
 
-		fmt.Println(word)
+	for _, word := range uniqueWordList {
+		println(word)
 	}
 }
 
+// filterWords will find words with character length equal to 5
 func filterWords(words []string) []string {
 	var fiveLetters []string
 
@@ -55,6 +58,7 @@ func checkUnique(words []string) []string {
 	return uniqueWord
 }
 
+// loadWords will read file of words into string array
 func loadWords(files []string) string {
 	var words []string
 	for _, f := range files {
@@ -67,4 +71,44 @@ func loadWords(files []string) string {
 	}
 
 	return strings.Join(words, "")
+}
+
+// wordList will find a combination of words where every letter is unique across all the words
+func wordList(words []string) []string {
+	var uniqueWordList []string
+	var maxListSize = 5
+	var count = 0
+
+	for len(uniqueWordList) < maxListSize {
+		uniqueWordList = append(uniqueWordList, words[count])
+		for _, word := range words {
+			for i, char := range word {
+				uniqueChar := checkCharInWord(uniqueWordList, char)
+				if uniqueChar == true {
+					break
+				}
+				if i == len(word)-1 {
+					uniqueWordList = append(uniqueWordList, word)
+				}
+			}
+		}
+		count++
+		uniqueWordList = nil
+		if count == len(words) {
+			break
+		}
+	}
+	return uniqueWordList
+}
+
+// checkCharInWord will check if a character is in a word list
+func checkCharInWord(words []string, character rune) bool {
+	for _, word := range words {
+		for _, char := range word {
+			if character == char {
+				return true
+			}
+		}
+	}
+	return false
 }
