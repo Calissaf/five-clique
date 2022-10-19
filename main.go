@@ -19,6 +19,10 @@ func main() {
 	words := strings.Split(allWords, "\n")
 	filtered := filterWords(words)
 	uniqueWords := checkUnique(filtered)
+
+	//  var test = []string{"brick", "brick", "glent", "jumpy", "vozhd", "waqfs"}
+	// var test = []string{"brick", "jumpy", "brick", "jumpy", "snail", "trunk", "glent"}
+
 	uniqueWordList := wordList(uniqueWords)
 
 	fmt.Println(len(uniqueWordList))
@@ -75,27 +79,25 @@ func loadWords(files []string) string {
 
 // wordList will find a combination of words where every letter is unique across all the words
 func wordList(words []string) []string {
-	var uniqueWordList []string
-	var maxListSize = 5
+	var finalUniqueWordList []string
+	var maxListSize = 2
 	var count = 0
 	var completeList = false
 
 	for completeList == false {
-		uniqueWordList = append(uniqueWordList, words[count])
+		finalUniqueWordList = append(finalUniqueWordList, words[count])
 		for _, word := range words {
-			for i, char := range word {
-				uniqueChar := checkCharInWord(uniqueWordList, char)
-				if uniqueChar == true {
-					break
-				}
-				if i == len(word)-2 {
-					uniqueWordList = append(uniqueWordList, word)
-				}
+			charInWordList := checkCharInWord(finalUniqueWordList, word)
+			if charInWordList == false {
+				finalUniqueWordList = append(finalUniqueWordList, word)
+			}
+			if len(finalUniqueWordList) == maxListSize {
+				break
 			}
 		}
-		if len(uniqueWordList) < maxListSize {
+		if len(finalUniqueWordList) < maxListSize {
 			count++
-			uniqueWordList = nil
+			finalUniqueWordList = nil
 		} else {
 			completeList = true
 		}
@@ -103,15 +105,17 @@ func wordList(words []string) []string {
 			break
 		}
 	}
-	return uniqueWordList
+	return finalUniqueWordList
 }
 
 // checkCharInWord will check if a character is in a word list
-func checkCharInWord(words []string, character rune) bool {
-	for _, word := range words {
-		for _, char := range word {
-			if character == char {
-				return true
+func checkCharInWord(wordList []string, newWord string) bool {
+	for _, word := range wordList {
+		for _, wordListCharacter := range word {
+			for _, newWordCharacter := range newWord {
+				if newWordCharacter == wordListCharacter {
+					return true
+				}
 			}
 		}
 	}
