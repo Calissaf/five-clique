@@ -51,91 +51,6 @@ func CheckUnique(words []string) []string {
 	return uniqueWord
 }
 
-/*
-abcde
-cabde
-badce
-
-
-"abcde": []string{
-	"abcde",
-	"cabde",
-	"badce",
-}
-
-collisions = abcde ** bdefg
-abcde {
-
-
-}
-
-map[string][]string{
-	"abcde": []string{
-		...
-		"zplio",
-		...
-	}
-	"zplio": []string{
-		"ghest",
-	}
-	"ghest": []string{
-		"yuqwz",
-		"yuqwm",
-	}
-}
-
-map of collisions for every anagram
-in WordList:
-	disregard all collisions with length < maxWordList
-	for each collision list > maxWordList compare with original words import
-
-*/
-
-// wordList will find a combination of words where every letter is unique across all the words
-func WordList(wordMap map[string][]string) []string {
-	var words []string
-	var anagrams []string
-	const maxWordsList = 5
-	//  key, value :=
-	for key, _ := range wordMap {
-		anagrams = append(anagrams, key)
-	}
-
-	sort.Strings(anagrams)
-
-	for i, j := 0, len(anagrams)-1; i < len(anagrams)/2; i, j = i+1, j-1 {
-		beginning := anagrams[i]
-		end := anagrams[j]
-
-		if !checkCharInWord(words, beginning) && len(words) < maxWordsList {
-			words = append(words, beginning)
-		}
-		if !checkCharInWord(words, end) && len(words) < maxWordsList {
-			words = append(words, end)
-		}
-		if len(words) == maxWordsList {
-			break
-		}
-
-	}
-
-	return words
-}
-
-// checkCharInWord will check if a character is in a word list
-func checkCharInWord(wordList []string, newWord string) bool {
-	for _, word := range wordList {
-		for _, wordListCharacter := range word {
-			for _, newWordCharacter := range newWord {
-				if newWordCharacter == wordListCharacter {
-					return true
-				}
-			}
-		}
-	}
-	return false
-}
-
 func GenerateAnagrams(words []string) map[string][]string {
 	anagrams := make(map[string][]string)
 	for _, w := range words {
@@ -146,4 +61,83 @@ func GenerateAnagrams(words []string) map[string][]string {
 	}
 
 	return anagrams
+}
+
+/*
+map of collisions for every anagram
+in WordList:
+	disregard all collisions with length < maxWordList
+	for each collision list > maxWordList compare with original words import
+
+*/
+
+func FindCollisions(anagrams map[string][]string) map[string][]string {
+	collisions := make(map[string][]string)
+	for anagramKey, _ := range anagrams {
+		for collisionKey, _ := range anagrams {
+			if !checkCharInWord(anagramKey, collisionKey) {
+				collisions[anagramKey] = append(collisions[anagramKey], collisionKey)
+			}
+
+		}
+	}
+	return collisions
+}
+
+func checkCharInWord(originalWord string, comparsionWord string) bool {
+	for _, originalChar := range originalWord {
+		for _, compcomparsionChar := range comparsionWord {
+			if compcomparsionChar == originalChar {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// wordList will find a combination of words where every letter is unique across all the words
+func WordList(collisonMap map[string][]string, fullWordList []string) []string {
+	var distinctWords []string
+	const maxWordsList = 5 // REMEBER TO CHANGE TEST AND VARIABLE TO 5
+	//  key, value :=
+
+	for key, values := range collisonMap {
+		if len(values)+1 == maxWordsList {
+			for _, word := range fullWordList {
+				if len(distinctWords) == 0 && checkWordInAnagram(key, word) {
+					distinctWords = append(distinctWords, word)
+					break
+				}
+			}
+			for _, value := range values {
+				for _, word := range fullWordList {
+					if len(distinctWords) > 0 && checkWordInAnagram(value, word) {
+						distinctWords = append(distinctWords, word)
+						break
+					}
+				}
+			}
+		}
+	}
+
+	return distinctWords
+}
+
+// checkWordInAnagramList will check if a word is in a list of anagrams
+func checkWordInAnagram(anagram string, comparisonWord string) bool {
+	var countMatches = 0
+	for _, anagramCharacter := range anagram {
+		for _, newWordCharacter := range comparisonWord {
+			if newWordCharacter == anagramCharacter {
+				countMatches++
+				break
+			}
+		}
+	}
+	if countMatches == len(anagram) {
+		return true
+	} else {
+		return false
+	}
 }

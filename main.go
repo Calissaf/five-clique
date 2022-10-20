@@ -22,13 +22,14 @@ func main() {
 	uniqueWords := words.CheckUnique(filtered)
 	reverse(uniqueWords)
 	anagrams := words.GenerateAnagrams(uniqueWords)
-	fmt.Printf("words: %d | anagrams %d\n", len(uniqueWords), len(anagrams))
+	collisionMap := words.FindCollisions(anagrams)
+	fmt.Printf("words: %d | anagrams %d | collision map %d\n", len(uniqueWords), len(anagrams), len(collisionMap))
 	fmt.Printf("%d words saved\n", len(uniqueWords)-len(anagrams))
 
 	//  var test = []string{"brick", "brick", "glent", "jumpy", "vozhd", "waqfs"}
 	// var test = []string{"brick", "jumpy", "brick", "jumpy", "snail", "trunk", "glent"}
 
-	uniqueWordList := words.WordList(anagrams)
+	uniqueWordList := words.WordList(collisionMap, uniqueWords)
 
 	fmt.Println(len(uniqueWordList))
 
